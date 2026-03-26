@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Too Burned Out To Try</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#fdf6ed; --surface:#fffcf7; --border:#e8d5bc; --border-acc:#d4a87a;
+      --amber:#c97d45; --amber-pale:#fdf0e4; --amber-light:#e8a87c;
+      --rose:#c4706a; --sage:#6b9e7a; --sage-pale:#eef5f0; --sage-light:#a8c8b0;
+      --gold:#b8924a; --gold-pale:#fdf4e4; --gold-light:#d4b47a;
+      --text:#3d2e1e; --text-mid:#7a5c3e; --text-soft:#a88a6e; --text-ghost:#c4aa8e;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family:'Nunito',sans-serif;
+      background: linear-gradient(160deg,#fdf6ed 0%,#f9efe0 60%,#f5ead6 100%);
+      min-height:100vh;
+      display:flex; justify-content:center;
+      padding:0 16px 80px;
+    }
+    .wrap { width:100%; max-width:500px; }
+
+    /* SCREENS - simple block/none, no animation tricks */
+    .screen { display:none; }
+    .screen.active { display:block; }
+
+    /* ── WELCOME ── */
+    .welcome { text-align:center; padding:52px 0 36px; }
+    .w-icon { font-size:40px; margin-bottom:20px; display:block; }
+    .eyebrow { font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber); font-weight:700; margin-bottom:14px; }
+    .welcome h1 { font-family:'Lora',serif; font-size:clamp(28px,9vw,44px); font-weight:400; color:var(--text); line-height:1.1; letter-spacing:-0.02em; }
+    .welcome h1 em { font-style:italic; background:linear-gradient(135deg,var(--amber),var(--rose)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .welcome-sub { margin:14px auto 0; font-size:15px; font-weight:300; color:var(--text-mid); line-height:1.7; max-width:320px; }
+    .promise-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:22px 24px; margin:26px 0; text-align:left; }
+    .promise-label { font-size:11px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber); margin-bottom:14px; }
+    .promise-item { display:flex; gap:12px; margin-bottom:10px; font-size:14px; font-weight:300; color:var(--text); line-height:1.6; }
+    .promise-item:last-child { margin-bottom:0; }
+    .pi { font-size:16px; flex-shrink:0; }
+
+    /* PRIMARY BUTTON */
+    .btn-primary { width:100%; font-family:'Nunito',sans-serif; font-size:16px; font-weight:700; color:#fff; background:linear-gradient(135deg,var(--amber),var(--rose)); border:none; border-radius:50px; padding:17px; cursor:pointer; box-shadow:0 6px 22px rgba(201,125,69,0.38); letter-spacing:0.02em; }
+    .btn-primary:active { opacity:0.9; transform:scale(0.99); }
+
+    /* ── STEP SCREENS ── */
+    .step-top { text-align:center; padding:40px 0 24px; }
+    .dots { display:flex; gap:7px; justify-content:center; margin-bottom:20px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--border); }
+    .dot.on { background:var(--amber); transform:scale(1.25); }
+    .step-top h2 { font-family:'Lora',serif; font-size:clamp(19px,5vw,26px); font-weight:400; color:var(--text); line-height:1.3; }
+    .step-top p { font-size:13px; font-weight:300; color:var(--text-soft); margin-top:8px; line-height:1.6; }
+
+    /* CHOICE LIST */
+    .choices { display:flex; flex-direction:column; gap:9px; margin-bottom:20px; }
+    .choice { width:100%; display:flex; align-items:center; gap:13px; padding:15px 17px; background:var(--surface); border:1.5px solid var(--border); border-radius:14px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:15px; font-weight:500; color:var(--text); text-align:left; }
+    .choice:active, .choice.on { border-color:var(--amber); background:var(--amber-pale); }
+    .ce { font-size:20px; flex-shrink:0; }
+
+    /* GRID */
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:20px; }
+    .grid2 .choice { flex-direction:column; align-items:flex-start; gap:5px; padding:13px 15px; }
+    .grid2 .choice .ce { font-size:22px; }
+    .gl { font-size:13.5px; font-weight:500; color:var(--text); }
+
+    /* TIME PILLS */
+    .pills { display:flex; gap:9px; margin-bottom:24px; }
+    .pill { flex:1; padding:13px 8px; background:var(--surface); border:1.5px solid var(--border); border-radius:40px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text-mid); text-align:center; }
+    .pill:active, .pill.on { border-color:var(--amber); background:var(--amber-pale); color:var(--amber); }
+
+    /* SECTION LABEL */
+    .slabel { font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--text-soft); margin-bottom:10px; margin-top:4px; }
+
+    /* NAV ROW */
+    .nav { display:flex; gap:10px; margin-top:4px; }
+    .btn-back { flex:0 0 auto; padding:13px 20px; background:transparent; border:1.5px solid var(--border); border-radius:40px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:14px; font-weight:500; color:var(--text-soft); }
+    .btn-next { flex:1; padding:14px; background:linear-gradient(135deg,var(--amber),var(--rose)); border:none; border-radius:40px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:15px; font-weight:700; color:#fff; box-shadow:0 4px 16px rgba(201,125,69,0.32); opacity:0.4; pointer-events:none; }
+    .btn-next.on { opacity:1; pointer-events:auto; }
+    .btn-next.on:active { opacity:0.9; }
+
+    /* ── RESPONSE ── */
+    .resp-top { text-align:center; padding:36px 0 20px; }
+    .resp-top .ri { font-size:34px; margin-bottom:10px; display:block; }
+    .resp-top h2 { font-family:'Lora',serif; font-size:23px; font-weight:400; color:var(--text); }
+    .resp-top p { font-size:13px; color:var(--text-soft); margin-top:6px; font-weight:300; }
+
+    .rcard { background:var(--surface); border:1px solid var(--border); border-radius:18px; overflow:hidden; margin-bottom:12px; }
+    .rbar { height:3px; }
+    .rbar-rose { background:linear-gradient(90deg,var(--rose),var(--amber-light)); }
+    .rbar-sage { background:linear-gradient(90deg,var(--sage),#a8d4b8); }
+    .rbar-gold { background:linear-gradient(90deg,var(--gold),var(--amber-light)); }
+    .rbody { padding:20px 22px; }
+    .rnum { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; font-size:12px; font-weight:700; color:#fff; margin-bottom:10px; }
+    .rnum-rose { background:var(--rose); }
+    .rnum-sage { background:var(--sage); }
+    .rnum-gold { background:var(--gold); }
+    .rtitle { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-soft); margin-bottom:10px; }
+    .rcontent { font-size:14px; font-weight:300; color:var(--text); line-height:1.75; }
+    .ropt { background:#fdf6ed; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; font-size:13.5px; font-weight:300; color:var(--text); line-height:1.65; }
+    .ropt:last-child { margin-bottom:0; }
+    .pick-label { font-size:12px; color:var(--text-soft); font-weight:500; margin-bottom:8px; }
+
+    .biohack { background:var(--gold-pale); border:1px solid var(--gold-light); border-radius:12px; padding:13px 16px; font-size:13.5px; font-weight:300; color:var(--text); line-height:1.65; margin-bottom:12px; }
+
+    .perm-box { background:linear-gradient(135deg,var(--gold-pale),#fefaf4); border:1px solid var(--gold-light); border-radius:16px; padding:18px 20px; position:relative; overflow:hidden; margin-bottom:14px; }
+    .perm-bar { position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,var(--amber),var(--gold)); }
+    .perm-label { font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+    .perm-text { font-family:'Lora',serif; font-size:15.5px; font-style:italic; color:var(--text); line-height:1.65; padding-left:6px; }
+
+    .btn-restart { width:100%; padding:14px; background:transparent; border:1.5px solid var(--border); border-radius:40px; cursor:pointer; font-family:'Nunito',sans-serif; font-size:14px; font-weight:600; color:var(--text-soft); margin-bottom:12px; }
+    .btn-restart:active { border-color:var(--amber); color:var(--amber); }
+
+    footer { text-align:center; font-size:12px; color:var(--text-ghost); font-weight:300; line-height:2; padding-top:8px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- SCREEN 0: WELCOME -->
+  <div class="screen active" id="s0">
+    <div class="welcome">
+      <span class="w-icon">🕯️</span>
+      <p class="eyebrow">Built for the mom who's running on empty</p>
+      <h1>Too <em>Burned Out</em><br>To Try</h1>
+      <p class="welcome-sub">Your 60-second nervous system reset.<br>No routine. No tracking. No guilt.</p>
+      <div class="promise-card">
+        <p class="promise-label">In 60 seconds, you'll get:</p>
+        <div class="promise-item"><span class="pi">✨</span><span>A gentle reset made for exactly where you are right now</span></div>
+        <div class="promise-item"><span class="pi">🎯</span><span>One micro-win that makes starting feel possible</span></div>
+        <div class="promise-item"><span class="pi">👣</span><span>A tiny next step so you don't spiral</span></div>
+      </div>
+      <button class="btn-primary" onclick="goTo(1)">Let's Reset →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: MOOD -->
+  <div class="screen" id="s1">
+    <div class="step-top">
+      <div class="dots"><div class="dot on"></div><div class="dot"></div></div>
+      <h2>What's happening right now?</h2>
+      <p>We're not fixing your whole life.<br>Just ONE reset + ONE tiny win.</p>
+    </div>
+    <div class="choices">
+      <button class="choice" onclick="pickMood(this,'overwhelmed')"><span class="ce">😵‍💫</span>Overwhelmed / Anxious</button>
+      <button class="choice" onclick="pickMood(this,'momguilt')"><span class="ce">💔</span>Mom guilt / Shame spiral</button>
+      <button class="choice" onclick="pickMood(this,'cantfunction')"><span class="ce">🧱</span>Stuck / Can't start anything</button>
+      <button class="choice" onclick="pickMood(this,'exhausted')"><span class="ce">😮‍💨</span>Burnt out / Exhausted</button>
+      <button class="choice" onclick="pickMood(this,'lostmyself')"><span class="ce">🪞</span>Lost myself / Don't know who I am</button>
+      <button class="choice" onclick="pickMood(this,'emotional')"><span class="ce">🌀</span>Emotional spiral / Dysregulated</button>
+      <button class="choice" onclick="pickMood(this,'sensory')"><span class="ce">🔊</span>Sensory overload / Touched out</button>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(0)">← Back</button>
+      <button class="btn-next" id="n1" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: CONTEXT -->
+  <div class="screen" id="s2">
+    <div class="step-top">
+      <div class="dots"><div class="dot"></div><div class="dot on"></div></div>
+      <h2>Where are you + what's possible?</h2>
+    </div>
+    <p class="slabel">📍 Location</p>
+    <div class="grid2" id="loc-grid">
+      <button class="choice" onclick="pickLoc(this,'home')"><span class="ce">🏠</span><span class="gl">At home</span></button>
+      <button class="choice" onclick="pickLoc(this,'work')"><span class="ce">💼</span><span class="gl">At work</span></button>
+      <button class="choice" onclick="pickLoc(this,'public')"><span class="ce">👥</span><span class="gl">In public</span></button>
+      <button class="choice" onclick="pickLoc(this,'bed')"><span class="ce">🛏️</span><span class="gl">In bed / low energy</span></button>
+    </div>
+    <p class="slabel" style="margin-top:8px">⏱️ What do you have capacity for?</p>
+    <div class="pills">
+      <div class="pill" onclick="pickTime(this,'2')">2 minutes</div>
+      <div class="pill" onclick="pickTime(this,'5')">5 minutes</div>
+      <div class="pill" onclick="pickTime(this,'10')">10 minutes</div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" id="n2" onclick="showPlan()">Show my plan →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: PLAN -->
+  <div class="screen" id="s3">
+    <div class="resp-top">
+      <span class="ri">⭐</span>
+      <h2>Your Easy Mode Plan</h2>
+      <p>No perfection needed. Just start.</p>
+    </div>
+
+    <div class="rcard">
+      <div class="rbar rbar-rose"></div>
+      <div class="rbody">
+        <div class="rnum rnum-rose">1</div>
+        <div class="rtitle" id="t-reset">RESET (2 minutes)</div>
+        <div class="rcontent" id="c-reset"></div>
+      </div>
+    </div>
+
+    <div class="rcard">
+      <div class="rbar rbar-sage"></div>
+      <div class="rbody">
+        <div class="rnum rnum-sage">2</div>
+        <div class="rtitle" id="t-win">MICRO WIN (5 minutes)</div>
+        <div class="rcontent" id="c-win"></div>
+      </div>
+    </div>
+
+    <div class="rcard">
+      <div class="rbar rbar-gold"></div>
+      <div class="rbody">
+        <div class="rnum rnum-gold">3</div>
+        <div class="rtitle">NEXT TINY STEP (30 seconds)</div>
+        <div class="rcontent" id="c-step"></div>
+      </div>
+    </div>
+
+    <div class="biohack" id="c-bio"></div>
+
+    <div class="perm-box">
+      <div class="perm-bar"></div>
+      <div class="perm-label">You're allowed to</div>
+      <div class="perm-text" id="c-perm"></div>
+    </div>
+
+    <button class="btn-restart" onclick="restart()">↺ Start Over</button>
+
+    <footer>
+      <strong style="color:#7a5c3e">Too Burned Out To Try</strong> — made with care for ADHD moms 🌿<br>
+      Not a therapist · Not a diagnosis · Just a calm corner<br>
+      Crisis support · Text HOME to 741741
+    </footer>
+  </div>
+
+</div>
+<script>
+var mood=null, loc=null, time=null, lastPick={};
+
+function goTo(n){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('s'+n).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function pickMood(btn,m){
+  document.querySelectorAll('#s1 .choice').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  mood=m;
+  document.getElementById('n1').classList.add('on');
+}
+
+function pickLoc(btn,l){
+  document.querySelectorAll('#loc-grid .choice').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  loc=l;
+  checkNext2();
+}
+
+function pickTime(pill,t){
+  document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('on'); });
+  pill.classList.add('on');
+  time=t;
+  checkNext2();
+}
+
+function checkNext2(){
+  if(loc&&time) document.getElementById('n2').classList.add('on');
+}
+
+function restart(){
+  mood=null; loc=null; time=null;
+  lastPick={};
+  document.querySelectorAll('.choice').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('on'); });
+  document.getElementById('n1').classList.remove('on');
+  document.getElementById('n2').classList.remove('on');
+  goTo(0);
+}
+
+function rnd(arr, key){
+  // Track which indexes have been shown — reset when all seen
+  if(!lastPick[key]) lastPick[key]={seen:[], last:-1};
+  var state = lastPick[key];
+  // If we've seen all, reset seen list (but keep last to avoid immediate repeat)
+  if(state.seen.length >= arr.length){
+    state.seen = state.last >= 0 ? [state.last] : [];
+  }
+  var idx;
+  var tries=0;
+  do{
+    idx=Math.floor(Math.random()*arr.length);
+    tries++;
+  }while(state.seen.indexOf(idx)!==-1 && tries<50);
+  state.seen.push(idx);
+  state.last=idx;
+  return arr[idx];
+}
+
+// ── ALL CONTENT ───────────────────────────────────────────────
+var D = {
+  overwhelmed:{
+    resets:{
+      home:["🧠 <strong>Mind:</strong> Box breathing — inhale 4, hold 4, exhale 4, hold 4. Repeat twice.","👀 <strong>Sight:</strong> Soft eyes — look out a window and slowly name 5 things you see out loud.","🤲 <strong>Touch:</strong> Pressure reset — hold a pillow tight against your chest for 30 seconds."],
+      work:["🧠 <strong>Mind:</strong> 4-7-8 breathing — inhale 4, hold 7, exhale 8. Do this twice quietly.","👀 <strong>Sight:</strong> Look away from screens. Find one thing far away and focus on it for 30 seconds.","🚶 <strong>Body:</strong> Walk to get a glass of water. Just move your body briefly."],
+      public:["🧠 <strong>Mind:</strong> Slow your exhale to twice as long as your inhale. Do this 5 times.","👀 <strong>Sight:</strong> Name 5 things you can see, 4 you can hear, 3 you can feel.","🤲 <strong>Touch:</strong> Press your feet firmly into the floor and feel solid ground beneath you."],
+      bed:["🧠 <strong>Mind:</strong> Just breathe. Long slow breaths until your body relaxes slightly.","🤲 <strong>Touch:</strong> Pull your covers up and feel their weight. Notice the sensation.","👀 <strong>Sight:</strong> Close your eyes. Let yourself just be still — nothing required."]
+    },
+    wins:["Pick the ONE most urgent thing (just one). Open it. Write one sentence. Stop. That's done.","Write a brain dump — everything in your head onto paper. You don't have to do any of it.","Text one person one honest sentence about how you're doing right now."],
+    steps:["What's the one thing that, if done, would make tomorrow feel easier? Write it down.","What can you delay or drop from today's list? Name one thing and let it go.","Set a timer for 10 minutes and do only the smallest version of the hardest task."],
+    bio:"💧 Drink a full glass of water right now. Dehydration makes overwhelm significantly worse.",
+    perm:"Let the list wait while you catch your breath. The tasks will still exist after you've regulated."
+  },
+  momguilt:{
+    resets:{
+      home:["🧠 <strong>Mind:</strong> Say out loud: 'I am doing the best I can with what I have.' Three times.","🤲 <strong>Touch:</strong> Hold yourself — arms crossed, hands on shoulders. Just 30 seconds.","✍️ <strong>Write:</strong> Name one thing you did for your children today, however small."],
+      work:["🧠 <strong>Mind:</strong> Breathe slowly and repeat quietly: 'My love for them is real even when I struggle.'","👀 <strong>Sight:</strong> Look at a photo of your kids. Notice the love you feel, not the guilt.","✍️ <strong>Write:</strong> Jot one moment this week where you showed up for them."],
+      public:["🧠 <strong>Mind:</strong> Breathe slowly. Remind yourself: guilt only visits people who care.","🤲 <strong>Touch:</strong> Press your hand to your heart. Feel it beating. You are here. You are trying.","👀 <strong>Sight:</strong> Look around. Find something beautiful. Let yourself notice it."],
+      bed:["🧠 <strong>Mind:</strong> Instead of replaying what went wrong, name one moment today where love was present.","🤲 <strong>Touch:</strong> Hold yourself gently. You deserve the same compassion you'd give a friend.","👀 <strong>Sight:</strong> Picture your child's face when they feel safe. That's real too."]
+    },
+    wins:["Do one small connected thing with your child — a hug, a song, five minutes of their favourite game.","Write down 3 things you DID do for your kids this week. Read them back to yourself.","Text or call one person who knows the real you. Just be honest about how you're doing."],
+    steps:["What's one thing you can forgive yourself for today — specifically, not generally?","Ask your child one question about their day and really listen to the answer.","Write one line: what kind of mom do you want to be? Not what you're not — what you are."],
+    bio:"🌿 Self-compassion literally improves parenting — it's not indulgent, it's practical. You parent better when you're not running on shame.",
+    perm:"Be an imperfect mom today. Imperfect and present is worth more than perfect and absent."
+  },
+  cantfunction:{
+    resets:{
+      home:["🧠 <strong>Mind:</strong> Say it out loud: 'I only have to start, not finish.' That's your only job.","🚶 <strong>Body:</strong> Stand up and shake your hands out. Then sit back down. That's enough movement.","🎵 <strong>Sound:</strong> Put on one song you actually like. Just listen. Don't do anything else yet."],
+      work:["🧠 <strong>Mind:</strong> Open one document or tab. Just open it. Don't do anything yet.","🚶 <strong>Body:</strong> Stand up, walk to get a glass of water, come back. Micro-movement win.","🎵 <strong>Sound:</strong> Put on headphones with background sound. Let it signal to your brain it's time."],
+      public:["🧠 <strong>Mind:</strong> Breathe slowly. You only have to do ONE thing. Name that one thing.","👀 <strong>Sight:</strong> Look around and name what's actually happening right now — just the facts.","🤲 <strong>Touch:</strong> Press your feet into the floor. Feel solid ground. You're here, you're okay."],
+      bed:["🧠 <strong>Mind:</strong> You don't have to get up yet. Your only job right now is to breathe and exist.","🤲 <strong>Touch:</strong> Notice the weight of your body on the bed. Let it hold you completely.","🎵 <strong>Sound:</strong> Put on something calming or familiar. Just sound. Nothing else required."]
+    },
+    wins:["Set a 2-minute timer. Open the task. Write one ugly sentence or one bullet. Stop when the timer goes.","Pick the smallest task on your list — not the most important, the smallest. Do only that.","Body double: put on a YouTube video of someone working quietly. Work alongside them for 5 minutes."],
+    steps:["What's the one next thing that takes less than 2 minutes? Write it. Set a timer. Do it.","Remove one obstacle between you and starting. What's making it harder to begin?","Tell someone out loud what you're trying to do. Saying it out loud helps the ADHD brain commit."],
+    bio:"🍌 Eat something with protein right now — low blood sugar is one of the biggest task-paralysis triggers for ADHD brains.",
+    perm:"Not start today. Rest is allowed even when things aren't done. The tasks will still exist tomorrow."
+  },
+  exhausted:{
+    resets:{
+      home:["🛌 <strong>Body:</strong> Lie down for 10 minutes. Set a timer so you don't spiral. Just rest.","💧 <strong>Hydrate:</strong> Drink a full glass of water slowly. Sit while you do it.","🤲 <strong>Touch:</strong> Get under something heavy — a blanket or weighted pillow. Let your body be held."],
+      work:["👀 <strong>Eyes:</strong> Close your eyes for 60 seconds. Put your head down if you can.","💧 <strong>Hydrate:</strong> Drink water slowly. Don't look at your screen while you do it.","🧠 <strong>Mind:</strong> Count backwards from 10 slowly. Nowhere to be for 60 seconds."],
+      public:["🧠 <strong>Mind:</strong> Slow your breathing right where you are. Long exhales. No one can see.","👀 <strong>Sight:</strong> Find something soft or beautiful to look at. Let your eyes rest on it.","🤲 <strong>Touch:</strong> Press your back against your seat and feel it support you fully."],
+      bed:["🛌 <strong>Body:</strong> You're already where you need to be. Close your eyes. Rest without guilt.","🧠 <strong>Mind:</strong> Tell yourself: 'Rest is productive right now. This is what my body needs.'","🤲 <strong>Touch:</strong> Pull covers close. Feel warmth. Let your body be completely heavy."]
+    },
+    wins:["Eat something nourishing — even just a banana or crackers with peanut butter. Feed your brain.","Sleep for 20 minutes if you can. Set a timer. That is the highest-value thing you can do right now.","Cancel or postpone one thing from today's list. That's an active win, not a failure."],
+    steps:["What's the one thing that absolutely has to happen today? Just that one. Everything else can wait.","Ask someone to take one specific thing off your plate. Not 'help me' — 'can you do X?'","Set a rest timer right now. When it goes off, reassess. You don't have to decide anything yet."],
+    bio:"⚡ ADHD burnout is real depletion — not laziness. Your brain has been working twice as hard. Sleep and food are medicine, not rewards.",
+    perm:"Rest without earning it first. You have already earned it many times over."
+  },
+  lostmyself:{
+    resets:{
+      home:["✍️ <strong>Write:</strong> Name one thing that is still just you — not mom. A taste, a song, an interest.","🎵 <strong>Sound:</strong> Put on a song from before you were a mom. Just listen to it.","🤲 <strong>Touch:</strong> Hold something that belongs to your pre-mom self — a book, a hobby item."],
+      work:["✍️ <strong>Write:</strong> On a scrap of paper: 'Before I was a mom I loved ___.' Fill it in honestly.","👀 <strong>Sight:</strong> Look out a window. Think about what you'd want to do if you had one free hour.","🧠 <strong>Mind:</strong> Breathe and remind yourself: you are a full person, not just a role."],
+      public:["🧠 <strong>Mind:</strong> Notice what catches your attention right now — not what you have to do. What interests you?","👀 <strong>Sight:</strong> Look around as yourself — not as a mom. Just you, observing the world.","🤲 <strong>Touch:</strong> Feel your own hand. Breathe. You are still here, underneath all of it."],
+      bed:["🧠 <strong>Mind:</strong> Ask yourself softly: what did I love before all of this? Let the answer come.","✍️ <strong>Write:</strong> On your phone: three things that are still true about you, not your role.","👀 <strong>Sight:</strong> Close your eyes and picture yourself doing something you love. Just the picture."]
+    },
+    wins:["Give five minutes to something purely yours — a show, a hobby, a walk, a song. Just five minutes.","Write a list starting with 'I am someone who...' — not as a mom, as yourself.","Text one friend who knew you before kids. Just say hi. That thread connects you back to yourself."],
+    steps:["What's one interest you used to have that you could do for 10 minutes this week? Schedule it.","Say no to one thing today so you can say yes to yourself instead.","Write one thing you want — not need, want. Don't judge it. Just write it down."],
+    bio:"🌱 ADHD identity needs active tending. Even five minutes a day of something that is just yours rebuilds the self over time.",
+    perm:"Take up space in your own life. You were a person before you were a mother. She's still in there."
+  },
+  emotional:{
+    resets:{
+      home:["🚶 <strong>Body:</strong> Move — shake your hands, walk the room, do jumping jacks. Discharge the energy physically.","💧 <strong>Cold water:</strong> Splash cold water on your face. It physically interrupts the spiral within 30 seconds.","🧠 <strong>Mind:</strong> Name the emotion out loud: 'I am feeling ___.' Say it three times. Naming reduces intensity."],
+      work:["🧠 <strong>Mind:</strong> Long exhale, twice as long as the inhale. Do this five times right now.","👀 <strong>Grounding:</strong> Name 5 things you can see, 4 you can hear, 3 you can physically feel.","🚶 <strong>Body:</strong> Excuse yourself briefly. Walk to the bathroom. Splash water on your wrists."],
+      public:["🧠 <strong>Mind:</strong> Slow your breathing right where you are. Nobody can see. Long slow exhales.","👀 <strong>Grounding:</strong> Press your feet into the floor. Feel it. Name three things you can see.","🤲 <strong>Touch:</strong> Press your fingernails gently into your palm. Just enough to feel it. Grounds you fast."],
+      bed:["🧠 <strong>Mind:</strong> Let yourself cry if it needs to come. Crying is discharge, not failure.","🤲 <strong>Touch:</strong> Hold yourself tightly. Arms around yourself. Stay there as long as you need.","👀 <strong>Sight:</strong> Close your eyes. Let the emotion be present without feeding it more thoughts."]
+    },
+    wins:["Journal for 5 minutes — write whatever is coming up without editing or judging it. Just let it out.","Call or text one safe person and tell them honestly how you're feeling right now.","Do something physical — a walk, dancing to one song, stretching. Move the emotion through your body."],
+    steps:["What is the emotion actually about underneath? Name the real thing without judging it.","Is there something that needs to be said, done, or let go of? Identify one. Just one.","What would help you feel 10% steadier right now? One thing. Do that thing."],
+    bio:"🧠 ADHD emotional dysregulation is neurological — not drama. Cold water on the face activates the dive reflex and can calm your nervous system within 30 seconds.",
+    perm:"Feel everything intensely. You are not too much. Your emotions are real and they will pass through."
+  },
+  sensory:{
+    resets:{
+      home:["🔇 <strong>Sound:</strong> Put on headphones — silence, brown noise, or calm music. Block out the chaos.","💡 <strong>Light:</strong> Dim the lights or go to the darkest quietest room in the house. Even 5 minutes.","🤲 <strong>Touch:</strong> Get under a weighted blanket or hold a pillow tightly against your chest."],
+      work:["🔇 <strong>Sound:</strong> Put in earbuds — even with nothing playing. It signals 'do not disturb' and reduces input.","👀 <strong>Sight:</strong> Reduce screen brightness. Close extra tabs. Simplify what's in front of you.","🚶 <strong>Space:</strong> Find a quieter spot — a stairwell, empty meeting room, anywhere lower-stimulation."],
+      public:["🔇 <strong>Sound:</strong> Put in earbuds or headphones immediately if you have them.","👀 <strong>Sight:</strong> Find the least busy, least bright area you can access and move there.","🧠 <strong>Mind:</strong> Breathe slowly and focus only on your breath. One sense, filtered."],
+      bed:["🔇 <strong>Sound:</strong> Create silence or white/brown noise to replace the input overwhelming you.","💡 <strong>Light:</strong> Make the room as dark as possible. Eye mask if needed.","🤲 <strong>Touch:</strong> Choose your softest covers. Minimise all texture. Let your body settle."]
+    },
+    wins:["Ask for 5 minutes alone — communicate it directly: 'I need 5 minutes of quiet to reset.' Then take it.","Step outside alone for 5 minutes. Fresh air and open space reduces sensory overwhelm quickly.","Remove one sensory trigger from your environment. Turn off the TV, close a door, move to a quieter room."],
+    steps:["What's the loudest sensory input right now? Name it. Can you reduce or remove it?","Tell someone nearby what you need: 'I'm overstimulated and need quiet for a bit.'","Plan one low-stimulation window for yourself today. Even 10 minutes counts."],
+    bio:"🔇 ADHD nervous systems don't filter sensory input the same way — what feels overwhelming IS overwhelming. Accommodation is not weakness, it's biology.",
+    perm:"Need less noise, less touch, less everything. Your sensory limits are real and communicating them is allowed."
+  }
+};
+
+function showPlan(){
+  if(!mood||!loc||!time) return;
+  var d=D[mood];
+  var resets=d.resets[loc]||d.resets['home'];
+
+  // Reset card
+  document.getElementById('t-reset').textContent='RESET (2 minutes)';
+  var cr=document.getElementById('c-reset');
+  cr.innerHTML='<p class="pick-label">Pick ONE that feels doable:</p>';
+  resets.forEach(function(r){
+    var div=document.createElement('div');
+    div.className='ropt';
+    div.innerHTML=r;
+    cr.appendChild(div);
+  });
+
+  // Win card
+  var tLabel = time==='2'?'MICRO WIN (2 minutes)':time==='5'?'MICRO WIN (5 minutes)':'MICRO WIN (10 minutes)';
+  document.getElementById('t-win').textContent=tLabel;
+  document.getElementById('c-win').textContent=rnd(d.wins,'win');
+
+  // Step
+  document.getElementById('c-step').textContent=rnd(d.steps,'step');
+
+  // Bio
+  document.getElementById('c-bio').innerHTML='⭐ <strong>Note:</strong> '+d.bio.substring(d.bio.indexOf(' ')+1);
+
+  // Permission
+  document.getElementById('c-perm').textContent=d.perm;
+
+  goTo(3);
+}
+</script>
+</body>
+</html>
